@@ -132,8 +132,8 @@ const App = ({ contract, currentUser, nearConfig, wallet }) => {
             <div>
               <p>To get some HOPE you need:</p>
               <p>
-                Step 1 - Open Deposit storage for HOPE token, if you havent used it BRD before{' '}
-                <button className="register" onClick={register}>Register</button>
+                Step 1 - Open Deposit storage for HOPE token, if you havent used it before{' '}
+                <p><button className="register" onClick={register}>Register</button></p>
               </p>
               <p>Step 2 - Mint and send HOPE to friends</p>
               {/* <p>
