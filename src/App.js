@@ -16,6 +16,11 @@ export default function App() {
   // after submitting the form, we want to show Notification
   const [showNotification, setShowNotification] = React.useState(false)
 
+  const [nearAddress, setNearAddress] = React.useState("");
+  const [amount, setAmount] = React.useState(0);
+  const [userBalance, setUserBalance] = React.useState(0);
+  const [storageBalance, setStorageBalance] = React.useState(null);
+
   // The useEffect hook can be used to fire side-effects during render
   // Learn more: https://reactjs.org/docs/hooks-intro.html
   React.useEffect(
@@ -28,13 +33,29 @@ export default function App() {
         //   .then(greetingFromContract => {
         //     set_greeting(greetingFromContract)
         //   })
+        const getStorageDeposit = async () => {
+          const storage = await contract.storage_balance_of({
+            account_id: accountId,
+          });
+          setStorageBalance(storage);
+        };
+        const getBalance = async () => {
+          const balance = await contract.ft_balance_of({
+            account_id: accountId,
+          });
+          setUserBalance(balance);
+        };
+        console.log(contract);
+        getBalance();
+        getStorageDeposit();
+
       }
     },
 
     // The second argument to useEffect tells React when to re-run the effect
     // Use an empty array to specify "only run on first render"
     // This works because signing into NEAR Wallet reloads the page
-    []
+    [accountId, setUserBalance, contract]
   )
 
   // if not signed in, return early with sign-in prompt
