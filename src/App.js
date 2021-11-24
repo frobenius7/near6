@@ -154,7 +154,7 @@ const App = ({ contract, currentUser, nearConfig, wallet }) => {
                   </fieldset>
                 </form> */}
             </div>
-            <div className="message-area">
+            <div>
             <div style={{ flex: 1 }}>
               <MintForm onMintSubmit={onMintSubmit} currentUser={currentUser} />
             </div>
