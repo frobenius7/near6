@@ -6,6 +6,8 @@ import TransferForm from './components/TransferForm';
 import MintForm from './components/MintForm';
 import SignIn from './components/SignIn';
 import Notification from './components/Notification';
+import spaceman from './assets/beard-white.svg';
+import beardLogo from './assets/beard-white.svg';
 
 const BOATLOAD_OF_GAS = Big(3).times(10 ** 13).toFixed();
 
@@ -117,9 +119,10 @@ const App = ({ contract, currentUser, nearConfig, wallet }) => {
         </header>
         <div>
           <h1 style={{ textAlign: 'center' }}>NEARvember Challenge #6</h1>
-          <h1>HOPIUM to everyone!</h1>  
-          <h3>Using this dAPP you can mint and transfer Tokens Of HOPE</h3>
-          <h5>Your Balance: {Balance} HOPE</h5>
+          <div className="image-container">
+              <img src={spaceman} style={{ width: '20%' }} alt="Spaceman" />
+            </div>
+          <h3>BEARD token <img src={beardLogo} style={{width: '32px', color: 'white'}} /> is now avilable for minting and transfering!</h3>
         </div>
       </div>
       :
@@ -153,10 +156,10 @@ const App = ({ contract, currentUser, nearConfig, wallet }) => {
                 </form> */}
             </div>
             <div className="message-area">
-            <div style={{ flex: 5 }}>
+            <div style={{ flex: 1 }}>
               <MintForm onMintSubmit={onMintSubmit} currentUser={currentUser} />
             </div>
-            <div style={{ flex: 5 }}>
+            <div style={{ flex: 1 }}>
               <TransferForm onTransferSubmit={onTransferSubmit} currentUser={currentUser} balance={balance} />
             </div>
           </div>
