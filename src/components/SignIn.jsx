@@ -7,5 +7,10 @@ export default function SignIn() {
     <div className="image-container">
       <img src={banner} style={{width: '50%' }} alt="Near to the moon" />
     </div>
+        <h1>NEARvember challenge 5 - NFT minting frontent!</h1>
+        <p>
+          Please sign in.
+        </p>
+
   );
 }
