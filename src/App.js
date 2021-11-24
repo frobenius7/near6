@@ -163,6 +163,41 @@ function Notification() {
 }
 
 
+async function depositStorage(to) {
+  if (storageBalance == null) {
+    await contract.storage_deposit(
+      { account_id: to },
+      "200000000000000",
+      Big(0.00125)
+        .times(10 ** 24)
+        .add(ONE_YOCTO_NEAR)
+        .toFixed()
+    );
+  }
+}
+async function transferHOPE(to, amount) {
+  if (storageBalance == null) {
+    await depositStorage(to);
+  } else {
+    await contract.send_tokens(
+      {
+        receiver_id: to,
+        amount,
+      },
+      "200000000000000",
+      Big(0.00125)
+        .times(10 ** 24)
+        .add(ONE_YOCTO_NEAR)
+        .toFixed()
+    );
+  }
+}
+
+function onSubmit(e) {
+  e.preventDefault();
+  transferHOPE(nearAddress, amount);
+}
+
 async function MintHope(to) {
   if (storageBalance == null) {
     await depositStorage(to);
