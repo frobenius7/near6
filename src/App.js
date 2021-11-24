@@ -1,242 +1,196 @@
-import 'regenerator-runtime/runtime'
-import React from 'react'
-import { login, logout } from './utils'
-import './global.css'
+import 'regenerator-runtime/runtime';
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import Big from 'big.js';
+import TransferForm from './components/TransferForm';
+import MintForm from './components/MintForm';
+import SignIn from './components/SignIn';
+import Notification from './components/Notification';
+import spaceman from './assets/beard-white.svg';
+import beardLogo from './assets/beard-white.svg';
 
-import getConfig from './config'
-const { networkId } = getConfig(process.env.NODE_ENV || 'development')
-const IMAGE_LINK = 'https://bafybeidp3cx75pfks44cfudka5l4ydgasj76zrsgmyhyy3tu22qy3c25ea.ipfs.dweb.link/'
-export default function App() {
-  // use React Hooks to store greeting in component state
-  // const [greeting, set_greeting] = React.useState()
+const BOATLOAD_OF_GAS = Big(3).times(10 ** 13).toFixed();
 
-  // when the user has not yet interacted with the form, disable the button
-  const [buttonDisabled, setButtonDisabled] = React.useState(false)
+const App = ({ contract, currentUser, nearConfig, wallet }) => {
+  const [balance, setBalance] = useState(0)
+  const [showNotification, setShowNotification] = useState(false)
 
-  // after submitting the form, we want to show Notification
-  const [showNotification, setShowNotification] = React.useState(false)
+  useEffect(() => {
+    getBalance()
+  }, [])
 
-  const [nearAddress, setNearAddress] = React.useState("");
-  const [amount, setAmount] = React.useState(0);
-  const [userBalance, setUserBalance] = React.useState(0);
-  const [storageBalance, setStorageBalance] = React.useState(null);
+  const getBalance = () => {
+    currentUser ? contract.ft_balance_of({account_id: currentUser.accountId }).then(balance => {setBalance(balance*1000000000000000000000000)}) : 0
+  }
 
-  // The useEffect hook can be used to fire side-effects during render
-  // Learn more: https://reactjs.org/docs/hooks-intro.html
-  React.useEffect(
-    () => {
-      // in this case, we only care to query the contract when signed in
-      if (window.walletConnection.isSignedIn()) {
+  const register = () => {
+    contract.storage_deposit(
+      {
+        account_id: currentUser.accountId,
+      },
+      BOATLOAD_OF_GAS,
+      Big(1)
+        .times(10 ** 24)
+        .toFixed()
+    );
+  };
 
-        // window.contract is set by initContract in index.js
-        // window.contract.get_greeting({ account_id: window.accountId })
-        //   .then(greetingFromContract => {
-        //     set_greeting(greetingFromContract)
-        //   })
-        const getStorageDeposit = async () => {
-          const storage = await contract.storage_balance_of({
-            account_id: accountId,
-          });
-          setStorageBalance(storage);
-        };
-        const getBalance = async () => {
-          const balance = await contract.ft_balance_of({
-            account_id: accountId,
-          });
-          setUserBalance(balance);
-        };
-        console.log(contract);
-        getBalance();
-        getStorageDeposit();
+  // const registerReceiver = () => {
+  //   contract.storage_deposit(
+  //     {
+  //       account_id: receiver.value,
+  //     },
+  //     BOATLOAD_OF_GAS,
+  //     Big(1)
+  //       .times(10 ** 24)
+  //       .toFixed()
+  //   );
+  // };
 
-      }
-    },
+  const onMintSubmit = (e) => {
+    e.preventDefault();
+    const { fieldset, amount } = e.target.elements;
+    contract.ft_mint(
+      {
+        receiver_id: currentUser.accountId,
+        amount: amount.value,
+      },
+      BOATLOAD_OF_GAS,
+      Big(1).times(10 ** 24).toFixed()
+    ).then(() => {
+      getBalance()
+      amount.value = 0;
+      fieldset.disabled = false;
+      accountId.focus();
+      // show Notification
+      setShowNotification(true)
+      setTimeout(() => {
+        setShowNotification(false)
+      }, 11000)
+    })
+  }
 
-    // The second argument to useEffect tells React when to re-run the effect
-    // Use an empty array to specify "only run on first render"
-    // This works because signing into NEAR Wallet reloads the page
-    [accountId, setUserBalance, contract]
-  )
+  const onTransferSubmit = (e) => {
+    e.preventDefault();
+    const { fieldset, receiverId, amount } = e.target.elements;
+    fieldset.disabled = true;
+    contract.ft_transfer(
+      {
+        receiver_id: receiverId.value,
+        amount: amount.value
+      },
+      BOATLOAD_OF_GAS,
+      Big(0.000000000000000000000001).times(10 ** 24).toFixed()
+    ).then(() => {
+      getBalance()
+      accountId.value = '';
+      amount.value = 0;
+      fieldset.disabled = false;
+      accountId.focus();
+      // show Notification
+      setShowNotification(true)
+      setTimeout(() => {
+        setShowNotification(false)
+      }, 11000)
+    })
+  }
 
-  // if not signed in, return early with sign-in prompt
-  if (!window.walletConnection.isSignedIn()) {
-    return (
-      <main>
-        <h1>NEARvember challenge 6 - FT mint and trasfer frontent by Vetal!</h1>
-        <p>
-          Please sign in.
-        </p>
-        <p style={{ textAlign: 'center', marginTop: '2.5em' }}>
-          <button onClick={login}>Sign in</button>
-        </p>
-      </main>
+  const signIn = () => {
+    wallet.requestSignIn(
+      nearConfig.contractName,
+      'NEARvember challenge 6'
     )
   }
 
+  const signOut = () => {
+    wallet.signOut();
+    window.location.replace(window.location.origin + window.location.pathname)
+  }
+
   return (
-    // use React Fragment, <>, to avoid wrapping elements in unnecessary divs
-    <>
-      <button className="link" style={{ float: 'right' }} onClick={logout}>
-        Sign out
-      </button>
-      <main>
-        <img className="nft" src={IMAGE_LINK} />
-          <div className="before">
-            Hi
-              {' '/* React trims whitespace around tags; insert literal space character when needed */}
-              {window.accountId}!
-            <p>Mint exclusive NearMan NFT from Vetal =)</p>
-
-            <form onSubmit={async event => {
-              event.preventDefault()
-
-              // get elements from the form using their id attribute
-              // const { fieldset, greeting } = event.target.elements
-
-              // hold onto new user-entered value from React's SynthenticEvent for use after `await` call
-              // const newGreeting = greeting.value
-
-              // disable the form while the value gets updated on-chain
-              fieldset.disabled = true
-
-              try {
-                await window.contract.nft_mint(
-                  {
-                    receiver_id: window.accountId,
-                    token_id: `${Date.now()}${window.accountId}${Math.floor(Math.random() * 10)}`,
-                    metadata: {
-                      title: 'Exclusive NearMan',
-                      media: IMAGE_LINK,
-                      copies: 1
-                    }
-                  }, '100000000000000', '10000000000000000000000')
-              } catch (e) {
-                alert(
-                  'Something went wrong! ' +
-                  'Maybe you need to sign out and back in? ' +
-                  'Check your browser console for more info.'
-                )
-                throw e
-              } finally {
-                // re-enable the form, whether the call succeeded or failed
-                fieldset.disabled = false
-              }
-              // show Notification
-              setShowNotification(true)
-
-              // remove Notification again after css animation completes
-              // this allows it to be shown again next time the form is submitted
-              setTimeout(() => {
-                setShowNotification(false)
-              }, 11000)
-            }}>
-              <fieldset id="fieldset">
-                  <button
-                    disabled={buttonDisabled}
-                  >
-                    Mint
-                  </button>
-              </fieldset>
-            </form>
+    <main>
+      {currentUser ?
+      <div>
+        <header>
+          <div className="account">
+            <div>Hi <span>{currentUser.accountId}!</span> Your balance: <span>{balance/1000000000000000000000000} BRD,</span> <span>{(currentUser.balance/1000000000000000000000000).toFixed(4)} NEAR</span></div>
           </div>
-          <div className="Balance-card">
-            <h5>Your HOPIUM Balance: {userBalance} HOPE</h5>
-          </div>          
-          <div className="transfer-card">
-            <h5>Give me 1000 units of HOPIUM</h5>
-            <p>
-              If it's first transaction on you have to do Storage Deposit for HOPE
-              Token, so try again when you got back from storage deposit
-              transaction.
-            </p>
-            <form onSubmit={onMintSubmit} className="transfer-form">
-              <div className="row center-row">
-                <input className="button-primary" type="submit" value="GIMMEEEE!" />
-              </div>
-            </form>
+          <button className="signout" onClick={signOut}>Log out</button>
+        </header>
+        <div>
+          <h1 style={{ textAlign: 'center' }}>NEARvember Challenge #6</h1>
+          <div className="image-container">
+              <img src={spaceman} style={{ width: '20%' }} alt="Spaceman" />
+            </div>
+          <h3>BEARD token <img src={beardLogo} style={{width: '32px', color: 'white'}} /> is now avilable for minting and transfering!</h3>
+        </div>
+      </div>
+      :
+      <header><button className="signin" onClick={signIn}>Log in</button></header>
+      }
+      { currentUser
+        ? <div>
+            <div>
+              <p>Just a few easy steps to get BRD:</p>
+              <p>
+                1. Register first if you did not use BRD before{' '}
+                <button className="register" onClick={register}>Register</button>
+              </p>
+              <p>2. Mint and anjoy or Transfer to friends</p>
+              {/* <p>
+                2. Register the receiver to ensure they can recieve transferred tokens
+              </p>
+                <form onSubmit={registerReceiver}>
+                  <fieldset id="fieldset">
+                    <span className="highlight">
+                      <label htmlFor="receiver">Receiver account:</label>
+                      <input
+                        autoComplete="off"
+                        autoFocus
+                        id="receiver"
+                        required
+                      />
+                      <button type="submit">Register</button>
+                    </span>
+                  </fieldset>
+                </form> */}
+            </div>
+            <div className="message-area">
+            <div style={{ flex: 5 }}>
+              <MintForm onMintSubmit={onMintSubmit} currentUser={currentUser} />
+            </div>
+            <div style={{ flex: 5 }}>
+              <TransferForm onTransferSubmit={onTransferSubmit} currentUser={currentUser} balance={balance} />
+            </div>
           </div>
-          <div className="after">
-            <p>Please find your new NFT in your <a target="_blank" rel="noreferrer" href="https://wallet.testnet.near.org/?tab=collectibles">wallet</a></p>
-          </div>
-      </main>
-      {showNotification && <Notification />}
-    </>
-  )
-}
+        </div>
+        : <SignIn />
+      }
+      { !!currentUser }
+      {showNotification && <Notification currentUser={currentUser} amount={getBalance()} />}
+    </main>
+  );
+};
 
-// this component gets rendered by App after the form is submitted
-function Notification() {
-  const urlPrefix = `https://explorer.${networkId}.near.org/accounts`
-  return (
-    <aside>
-      <a target="_blank" rel="noreferrer" href={`${urlPrefix}/${window.accountId}`}>
-        {window.accountId}
-      </a>
-      {' '/* React trims whitespace around tags; insert literal space character when needed */}
-      called method: 'nft_mint' in contract:
-      {' '}
-      <a target="_blank" rel="noreferrer" href={`${urlPrefix}/${window.contract.contractId}`}>
-        {window.contract.contractId}
-      </a>
-      <footer>
-        <div>✔ Succeeded</div>
-        <div>Just now</div>
-      </footer>
-    </aside>
-  )
-}
+App.propTypes = {
+  contract: PropTypes.shape({
+    ft_balance_of: PropTypes.func.isRequired,
+    ft_mint: PropTypes.func.isRequired,
+    ft_transfer: PropTypes.func.isRequired,
+    // is_registered: PropTypes.func.isRequired,
+    storage_deposit: PropTypes.func.isRequired
+  }).isRequired,
+  currentUser: PropTypes.shape({
+    accountId: PropTypes.string.isRequired,
+    balance: PropTypes.string.isRequired,
+  }),
+  nearConfig: PropTypes.shape({
+    contractName: PropTypes.string.isRequired
+  }).isRequired,
+  wallet: PropTypes.shape({
+    requestSignIn: PropTypes.func.isRequired,
+    signOut: PropTypes.func.isRequired
+  }).isRequired
+};
 
-
-async function depositStorage(to) {
-  if (storageBalance == null) {
-    await contract.storage_deposit(
-      { account_id: to },
-      "200000000000000",
-      Big(0.00125)
-        .times(10 ** 24)
-        .add(ONE_YOCTO_NEAR)
-        .toFixed()
-    );
-  }
-}
-async function transferHOPE(to, amount) {
-  if (storageBalance == null) {
-    await depositStorage(to);
-  } else {
-    await contract.send_tokens(
-      {
-        receiver_id: to,
-        amount,
-      },
-      "200000000000000",
-      Big(0.00125)
-        .times(10 ** 24)
-        .add(ONE_YOCTO_NEAR)
-        .toFixed()
-    );
-  }
-}
-
-function onSubmit(e) {
-  e.preventDefault();
-  transferHOPE(nearAddress, amount);
-}
-
-async function MintHope(to) {
-  if (storageBalance == null) {
-    await depositStorage(to);
-  } else {
-    await contract.ft_mint(
-      {
-        account_id: accountId,
-        amount: amount,
-      },
-      BOATLOAD_OF_GAS,
-      ONE_YOCTO_NEAR
-    );
-  }
-}
-async function onMintSubmit(e) {
-  e.preventDefault();
-  await buyDino(accountId);
-}
+export default App;

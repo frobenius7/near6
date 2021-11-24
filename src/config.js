@@ -1,12 +1,21 @@
-const CONTRACT_NAME = process.env.CONTRACT_NAME ||'ft.vetal.testnet'
+const CONTRACT_NAME = process.env.CONTRACT_NAME ||'beard.testnet'
 
 function getConfig(env) {
   switch (env) {
 
   case 'production':
   case 'mainnet':
+    return {
+      networkId: 'testnet',
+      nodeUrl: 'https://rpc.testnet.near.org',
+      contractName: CONTRACT_NAME,
+      walletUrl: 'https://wallet.testnet.near.org',
+      helperUrl: 'https://helper.testnet.near.org',
+      explorerUrl: 'https://explorer.testnet.near.org',
+    }
   case 'development':
   case 'testnet':
+  case 'local':
     return {
       networkId: 'testnet',
       nodeUrl: 'https://rpc.testnet.near.org',
@@ -24,14 +33,14 @@ function getConfig(env) {
       helperUrl: 'https://helper.betanet.near.org',
       explorerUrl: 'https://explorer.betanet.near.org',
     }
-  case 'local':
-    return {
-      networkId: 'local',
-      nodeUrl: 'http://localhost:3030',
-      keyPath: `${process.env.HOME}/.near/validator_key.json`,
-      walletUrl: 'http://localhost:4000/wallet',
-      contractName: CONTRACT_NAME,
-    }
+  // case 'local':
+  //   return {
+  //     networkId: 'local',
+  //     nodeUrl: 'http://localhost:3030',
+  //     keyPath: `${process.env.HOME}/.near/validator_key.json`,
+  //     walletUrl: 'http://localhost:4000/wallet',
+  //     contractName: CONTRACT_NAME,
+  //   }
   case 'test':
   case 'ci':
     return {

@@ -22,7 +22,7 @@ beforeAll(async function () {
   }
 })
 
-test('get_greeting', async () => {
-  const message = await window.contract.get_greeting({ account_id: window.accountId })
-  expect(message).toEqual('Hello')
-})
+// test('get_greeting', async () => {
+//   const message = await window.contract.get_greeting({ account_id: window.accountId })
+//   expect(message).toEqual('Hello')
+// })
