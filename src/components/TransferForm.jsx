@@ -27,7 +27,7 @@ export default function TransferForm({ onTransferSubmit, balance }) {
               step="1"
               type="number"
             />
-            <label htmlFor="amount">BRD</label>
+            <label htmlFor="amount">HOPE</label>
           </p>
           <button type="submit">
             Transfer
