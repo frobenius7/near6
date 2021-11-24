@@ -112,17 +112,16 @@ const App = ({ contract, currentUser, nearConfig, wallet }) => {
       {currentUser ?
       <div>
         <header>
-          <div className="account">
-            <div>Hi <span>{currentUser.accountId}!</span> Your balance: <span>{balance/1000000000000000000000000} BRD,</span> <span>{(currentUser.balance/1000000000000000000000000).toFixed(4)} NEAR</span></div>
-          </div>
+
           <button className="signout" onClick={signOut}>Log out</button>
         </header>
         <div>
           <h1 style={{ textAlign: 'center' }}>NEARvember Challenge #6</h1>
-          <div className="image-container">
-              <img src={spaceman} style={{ width: '20%' }} alt="Spaceman" />
-            </div>
-          <h3>BEARD token <img src={beardLogo} style={{width: '32px', color: 'white'}} /> is now avilable for minting and transfering!</h3>
+
+          <h3>Using this DApp you can mint HOPE Token and send it to your friends!</h3>
+           <div className="account">
+            <div>Hi <span>{currentUser.accountId}!</span> Your balance: <span>{balance/1000000000000000000000000} BRD,</span> <span>{(currentUser.balance/1000000000000000000000000).toFixed(4)} NEAR</span></div>
+          </div>  
         </div>
       </div>
       :
