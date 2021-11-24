@@ -122,7 +122,7 @@ const App = ({ contract, currentUser, nearConfig, wallet }) => {
           <div className="image-container">
               <img src={spaceman} style={{ width: '20%' }} alt="Spaceman" />
             </div>
-          <h1>HOPIUM to everyone!</h3>  
+          <h1>HOPIUM to everyone!</h1>  
           <h3>Using this dAPP you can mint and transfer Tokens Of HOPE</h3>
           <h5>Your Balance: {Balance} HOPE/h5>
         </div>
