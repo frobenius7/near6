@@ -139,6 +139,9 @@ export default function App() {
               </fieldset>
             </form>
           </div>
+          <div className="Balance-card">
+            <h5>Your HOPIUM Balance: {userBalance} HOPE</h5>
+          </div>          
           <div className="transfer-card">
             <h5>Give me 1000 units of HOPIUM</h5>
             <p>
