@@ -120,7 +120,7 @@ const App = ({ contract, currentUser, nearConfig, wallet }) => {
 
           <h3>Using this DApp you can mint HOPE Token and send it to your friends!</h3>
            <div className="account">
-            <div>Hi <span>{currentUser.accountId}!</span> Your balance: <span>{balance/1000000000000000000000000} BRD,</span> <span>{(currentUser.balance/1000000000000000000000000).toFixed(4)} NEAR</span></div>
+            <div>Hi <span>{currentUser.accountId}!</span> Your balance: <span>{balance/1000000000000000000000000} HOPE,</span> <span>{(currentUser.balance/1000000000000000000000000).toFixed(4)} NEAR</span></div>
           </div>  
         </div>
       </div>
@@ -130,12 +130,12 @@ const App = ({ contract, currentUser, nearConfig, wallet }) => {
       { currentUser
         ? <div>
             <div>
-              <p>Just a few easy steps to get BRD:</p>
+              <p>To get some HOPE you need:</p>
               <p>
-                1. Register first if you did not use BRD before{' '}
+                Step 1 - Open Deposit storage for HOPE token, if you havent used it BRD before{' '}
                 <button className="register" onClick={register}>Register</button>
               </p>
-              <p>2. Mint and anjoy or Transfer to friends</p>
+              <p>Step 2 - Mint and send HOPE to friends</p>
               {/* <p>
                 2. Register the receiver to ensure they can recieve transferred tokens
               </p>
