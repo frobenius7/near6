@@ -158,9 +158,9 @@ const App = ({ contract, currentUser, nearConfig, wallet }) => {
             <div style={{ flex: 1 }}>
               <MintForm onMintSubmit={onMintSubmit} currentUser={currentUser} />
             </div>
-            <p><div style={{ flex: 1 }}>
+            <div style={{ flex: 1 }}>
               <TransferForm onTransferSubmit={onTransferSubmit} currentUser={currentUser} balance={balance} />
-            </div></p>
+            </div>
           </div>
         </div>
         : <SignIn />
