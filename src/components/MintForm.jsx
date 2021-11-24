@@ -19,7 +19,7 @@ export default function MintForm({ onMintSubmit, currentUser }) {
               step="1"
               type="number"
             />
-            <label htmlFor="amount">BRD</label>
+            <label htmlFor="amount">HOPE</label>
           </p>
           <button type="submit">
             Mint
