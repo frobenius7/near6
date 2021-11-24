@@ -41,7 +41,7 @@ export default function App() {
   if (!window.walletConnection.isSignedIn()) {
     return (
       <main>
-        <h1>NEARvember challenge 5 - NFT minting frontent!</h1>
+        <h1>NEARvember challenge 6 - FT mint and trasfer frontent by Vetal!</h1>
         <p>
           Please sign in.
         </p>
@@ -118,6 +118,19 @@ export default function App() {
               </fieldset>
             </form>
           </div>
+          <div className="transfer-card">
+            <h5>Give me 1000 units of HOPIUM</h5>
+            <p>
+              If it's first transaction on you have to do Storage Deposit for HOPE
+              Token, so try again when you got back from storage deposit
+              transaction.
+            </p>
+            <form onSubmit={onMintSubmit} className="transfer-form">
+              <div className="row center-row">
+                <input className="button-primary" type="submit" value="GIMMEEEE!" />
+              </div>
+            </form>
+          </div>
           <div className="after">
             <p>Please find your new NFT in your <a target="_blank" rel="noreferrer" href="https://wallet.testnet.near.org/?tab=collectibles">wallet</a></p>
           </div>
@@ -147,4 +160,24 @@ function Notification() {
       </footer>
     </aside>
   )
+}
+
+
+async function MintHope(to) {
+  if (storageBalance == null) {
+    await depositStorage(to);
+  } else {
+    await contract.ft_mint(
+      {
+        account_id: accountId,
+        amount: amount,
+      },
+      BOATLOAD_OF_GAS,
+      ONE_YOCTO_NEAR
+    );
+  }
+}
+async function onMintSubmit(e) {
+  e.preventDefault();
+  await buyDino(accountId);
 }
