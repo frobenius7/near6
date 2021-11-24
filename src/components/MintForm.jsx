@@ -11,7 +11,7 @@ export default function MintForm({ onMintSubmit, currentUser }) {
             <label htmlFor="amount">Amount:</label>
             <input
               autoComplete="off"
-              defaultValue={'1000'}
+              defaultValue={'111'}
               id="amount"
               max={1000}
               // max={Big(currentUser.balance).div(10 ** 24)}
